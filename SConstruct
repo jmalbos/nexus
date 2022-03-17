@@ -260,7 +260,7 @@ if not env['LIBPATH']:
     ## GSL configuration ------------------------------------
 
     if env['GSL_BINDIR'] != NULL_PATH:
-        env.PrependENVPath('PATH', env['GSL_DIR'])
+        env.PrependENVPath('PATH', env['GSL_BINDIR'])
 
     env.ParseConfig('gsl-config --cflags --libs')
 

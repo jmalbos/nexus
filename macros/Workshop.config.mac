@@ -1,0 +1,27 @@
+## ----------------------------------------------------------------------------
+## nexus | Workshop.config.mac
+##
+## Configuration macro to simulate Tl-208 decays in a CsI Scintillation chamber
+## with generation and transportation of optical photons.
+##
+## The NEXT Collaboration
+## ----------------------------------------------------------------------------
+
+# VERBOSITY
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+
+/process/em/verbose 0
+
+# GEOMETRY
+/Geometry/CsIScintillator/radius 10 cm
+/Geometry/CsIScintillator/length 0.1 m
+
+# GENERATOR
+/Generator/IonGenerator/region INSIDE
+/Generator/IonGenerator/atomic_number 81
+/Generator/IonGenerator/mass_number 208
+
+# PERSISTENCY
+/nexus/persistency/outputFile Workshop_Tl208_CsIScint.sim
