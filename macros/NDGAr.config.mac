@@ -1,0 +1,7 @@
+/Generator/SingleParticle/particle proton
+/Generator/SingleParticle/min_energy  10.0 MeV
+/Generator/SingleParticle/max_energy  10.0 MeV
+#/Generator/SingleParticle/momentum 0. 0. 0.
+/Generator/SingleParticle/region CENTER
+
+/nexus/persistency/outputFile ndgar
