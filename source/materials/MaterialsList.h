@@ -20,6 +20,7 @@ namespace materials {
 
   using namespace CLHEP;
 
+  G4Material* Air();
 
   // Gaseous xenon
   G4Material* GXe(G4double pressure=STP_Pressure,

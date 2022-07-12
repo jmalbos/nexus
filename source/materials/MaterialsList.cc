@@ -20,6 +20,13 @@ using namespace CLHEP;
 
 
 namespace materials {
+
+  G4Material* Air()
+  {
+    return G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
+  }
+
+
   G4Material* GXe(G4double pressure, G4double temperature)
   {
     G4Material* mat = GXe_bydensity(GXeDensity(pressure),
