@@ -1,0 +1,23 @@
+### PHYSICS
+/PhysicsList/RegisterPhysics G4EmStandardPhysics_option4
+/PhysicsList/RegisterPhysics G4DecayPhysics
+/PhysicsList/RegisterPhysics G4RadioactiveDecayPhysics
+/PhysicsList/RegisterPhysics G4OpticalPhysics
+/PhysicsList/RegisterPhysics NexusPhysics
+/PhysicsList/RegisterPhysics G4StepLimiterPhysics
+
+### GEOMETRY
+/nexus/RegisterGeometry DemoScintillatorStrip
+
+### GENERATOR
+/nexus/RegisterGenerator SingleParticleGenerator
+
+### PERSISTENCY MANAGER
+/nexus/RegisterPersistencyManager PersistencyManager
+
+### ACTIONS
+/nexus/RegisterTrackingAction DefaultTrackingAction
+/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterRunAction DefaultRunAction
+
+/nexus/RegisterMacro macros/demo_muon_veto.config.mac
