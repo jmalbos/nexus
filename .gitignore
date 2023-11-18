@@ -25,6 +25,7 @@ nexus
 nexus-test
 *.o
 *.os
+output
 
 # test caches
 __pycache__
