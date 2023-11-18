@@ -57,10 +57,8 @@ namespace nexus {
 
     // NDGAR ////////////////////////////////////////////////////////
     // NDGAR VESSEL
-    //const G4double ndgar_vessel_length = 40.*m;
     const G4double ndgar_vessel_length = 6.0*m;
 
-    //const G4double ndgar_vessel_diam = ndgar_vessel_length+10.*m;
     const G4double ndgar_vessel_diam = ndgar_vessel_length+200.*cm;
     
     const G4double ndgar_vessel_thickness = 4.0*cm;
@@ -109,9 +107,8 @@ namespace nexus {
     // Define this volume as an ionization sensitive detector
     IonizationSD* sensdet_test = new IonizationSD("/NDGAR/TESTACTIVE");
     testbox_lv->SetSensitiveDetector(sensdet_test);
-    G4SDManager::GetSDMpointer()->AddNewDetector(sensdet_test);*/
-    
-
+    G4SDManager::GetSDMpointer()->AddNewDetector(sensdet_test);
+    */
 
     // OCTAGONAL ECAL
     const G4int ecal_nlayers = 60; //60
@@ -166,30 +163,17 @@ namespace nexus {
     // build full ecal
     G4RotationMatrix* ecal_rot = new G4RotationMatrix();
     ecal_rot->rotateY(90. * deg);
-    //new G4PVPlacement(ecal_rot, G4ThreeVector(0., 0., 0.),
-    //    ecal_logic_vol, "OCTAGONAL_ECAL", hall_logic_vol,
-    //    false, 0, true);
+    new G4PVPlacement(ecal_rot, G4ThreeVector(0., 0., 0.),
+        ecal_logic_vol, "OCTAGONAL_ECAL", hall_logic_vol,
+        false, 0, true);
 
     // ecal layer
-    /*G4Polyhedra* ecal_layer_solid_vol = 
-      new G4Polyhedra(
-      "OCTAGONAL_ECAL_LAYER", 
-        0., 360.*deg, 
-        ecal_nsides, 
-        ecal_z_nplanes, 
-        ecal_z_planes, 
-        ecal_r_inners_layer, 
-        ecal_r_outers_layer);
-    G4LogicalVolume* ecal_layer_logic_vol = 
-      new G4LogicalVolume(ecal_layer_solid_vol, materials::Air(), "OCTAGONAL_ECAL_LAYER");*/
-
     std::vector<G4Polyhedra*>     ecal_layers_solid_vol;
     std::vector<G4LogicalVolume*> ecal_layers_logic_vol;
     for (G4int i = 0; i < ecal_nlayers; i++) {
         const G4double temp_ecal_r_inners_layer[ecal_z_nplanes] = { ecal_rmin +  i      * ecal_layer_thickness, ecal_rmin +  i      * ecal_layer_thickness };
         const G4double temp_ecal_r_outers_layer[ecal_z_nplanes] = { ecal_rmin + (i + 1) * ecal_layer_thickness, ecal_rmin + (i + 1) * ecal_layer_thickness };
         std::string temp_name = "OCTAGONAL_ECAL_LAYER_" + std::to_string(i);
-        //std::cout << temp_name << std::endl;
         ecal_layers_solid_vol.push_back(new G4Polyhedra(
             temp_name,
             0., 360. * deg,
@@ -199,8 +183,8 @@ namespace nexus {
             temp_ecal_r_inners_layer,
             temp_ecal_r_outers_layer));
         ecal_layers_logic_vol.push_back(new G4LogicalVolume(ecal_layers_solid_vol.back(), materials::Air(), temp_name));
-        //new G4PVPlacement(nullptr, G4ThreeVector(0,0,0),
-        //                  ecal_layers_logic_vol.back(), temp_name, ecal_logic_vol, false, i, false);
+        new G4PVPlacement(nullptr, G4ThreeVector(0,0,0),
+                          ecal_layers_logic_vol.back(), temp_name, ecal_logic_vol, false, i, false);
     }
     
     // ecal converter layer
@@ -210,7 +194,6 @@ namespace nexus {
         const G4double temp_ecal_converter_r_inners_layer[ecal_z_nplanes] = { ecal_rmin + i*ecal_layer_thickness,                            ecal_rmin + i*ecal_layer_thickness };
         const G4double temp_ecal_converter_r_outers_layer[ecal_z_nplanes] = { ecal_rmin + i*ecal_layer_thickness + ecal_converter_thickness, ecal_rmin + i*ecal_layer_thickness + ecal_converter_thickness };
         std::string temp_name = "OCTAGONAL_ECAL_LAYER_CONVERTER_" + std::to_string(i);
-        //std::cout << temp_name << std::endl;
         ecal_layers_converter_solid_vol.push_back(new G4Polyhedra(
             temp_name,
             0., 360. * deg,
@@ -223,26 +206,10 @@ namespace nexus {
         mc_converter_sd[i] = new IonizationSD("/NDGAR/ECAL_MC_CONVERTER"+std::to_string(i));
         ecal_layers_converter_logic_vol[i]->SetSensitiveDetector(mc_converter_sd[i]);
         G4SDManager::GetSDMpointer()->AddNewDetector(mc_converter_sd[i]);
-        //new G4PVPlacement(nullptr, G4ThreeVector(0,0,0),
-        //                  ecal_layers_converter_logic_vol.back(), temp_name, ecal_layers_logic_vol[i], false, i, false);
+        new G4PVPlacement(nullptr, G4ThreeVector(0,0,0),
+                          ecal_layers_converter_logic_vol.back(), temp_name, ecal_layers_logic_vol[i], false, i, false);
     }
     
-    /*G4Polyhedra* ecal_layer_converter_solid_vol =
-      new G4Polyhedra(
-      "OCTAGONAL_ECAL_LAYER_CONVERTER", 
-        0., 360.*deg, 
-        ecal_nsides, 
-        ecal_z_nplanes, 
-        ecal_z_planes, 
-        ecal_r_inners_layer_converter, 
-        ecal_r_outers_layer_converter);
-    G4LogicalVolume* ecal_layer_converter_logic_vol =
-      new G4LogicalVolume(ecal_layer_converter_solid_vol, copper, "OCTAGONAL_ECAL_LAYER_CONVERTER");
-    new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.),
-                      ecal_layer_converter_logic_vol, "OCTAGONAL_ECAL_LAYER_CONVERTER", ecal_layer_logic_vol,
-                      false, 0, true);
-    */
-
     // ecal sensitive layer
     std::vector<G4Polyhedra*>     ecal_layers_sensdet_solid_vol;
     std::vector<G4LogicalVolume*> ecal_layers_sensdet_logic_vol;
@@ -250,7 +217,6 @@ namespace nexus {
         const G4double temp_ecal_sensdet_r_inners_layer[ecal_z_nplanes] = { ecal_rmin + i*ecal_layer_thickness + ecal_converter_thickness,                        ecal_rmin + i*ecal_layer_thickness + ecal_converter_thickness };
         const G4double temp_ecal_sensdet_r_outers_layer[ecal_z_nplanes] = { ecal_rmin + i*ecal_layer_thickness + ecal_converter_thickness + ecal_scint_thickness, ecal_rmin + i*ecal_layer_thickness + ecal_converter_thickness + ecal_scint_thickness };
         std::string temp_name = "OCTAGONAL_ECAL_LAYER_SENSDET_" + std::to_string(i);
-        //std::cout << temp_name << std::endl;
         ecal_layers_sensdet_solid_vol.push_back(new G4Polyhedra(
             temp_name,
             0., 360. * deg,
@@ -263,8 +229,8 @@ namespace nexus {
         sensdet_scint[i] = new IonizationSD("/NDGAR/ECAL_ACTIVE"+std::to_string(i));
         ecal_layers_sensdet_logic_vol[i]->SetSensitiveDetector(sensdet_scint[i]);
         G4SDManager::GetSDMpointer()->AddNewDetector(sensdet_scint[i]);
-        //new G4PVPlacement(nullptr, G4ThreeVector(0,0,0),
-        //                  ecal_layers_sensdet_logic_vol.back(), temp_name, ecal_layers_logic_vol[i], false, i, false);
+        new G4PVPlacement(nullptr, G4ThreeVector(0,0,0),
+                          ecal_layers_sensdet_logic_vol.back(), temp_name, ecal_layers_logic_vol[i], false, i, false);
     }
 
     // caps for hermeticity at anode and cathode, only for hits checks
@@ -280,35 +246,6 @@ namespace nexus {
     G4SDManager::GetSDMpointer()->AddNewDetector(sd_disc2);
     G4RotationMatrix* cap_rot = new G4RotationMatrix();
     cap_rot->rotateY(90.*deg);
-    //new G4PVPlacement(cap_rot, G4ThreeVector(-p_vessel_length/2.-3.0*cm,0,0), lv_sens_disc1, "PV_MC_CAP1", hall_logic_vol, false, 0, true);
-    //new G4PVPlacement(cap_rot, G4ThreeVector( p_vessel_length/2.+3.0*cm,0,0), lv_sens_disc2, "PV_MC_CAP2", hall_logic_vol, false, 0, true);
-
-    /*G4Polyhedra* ecal_layer_sensdet_solid_vol = 
-      new G4Polyhedra(
-      "OCTAGONAL_ECAL_LAYER_SENSDET", 
-        0., 360.*deg, 
-        ecal_nsides, 
-        ecal_z_nplanes, 
-        ecal_z_planes, 
-        ecal_r_inners_layer_sensdet, 
-        ecal_r_outers_layer_sensdet);
-    G4LogicalVolume* ecal_layer_sensdet_logic_vol =
-      new G4LogicalVolume(ecal_layer_sensdet_solid_vol, scinti, "OCTAGONAL_ECAL_LAYER_SENSDET");
-    new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.),
-                      ecal_layer_sensdet_logic_vol, "OCTAGONAL_ECAL_LAYER_SENSDET", ecal_layer_logic_vol,
-                      false, 0, true);
-    
-    std::cout << "Layer has " << ecal_layer_logic_vol->GetNoDaughters() << " daughters.\n";
-
-    new G4PVDivision("OCTAGONAL_ECAL_LAYER_PV", //inherits from G4Replica but can also handle Polyhedra
-                    ecal_layer_logic_vol,
-                    ecal_logic_vol,
-                    kRho, // https://geant4.kek.jp/lxr/source//geometry/volumes/include/G4PVReplica.hh
-                    ecal_nlayers,
-                    ecal_layer_thickness, // thickness of one replication 
-                    0.); // offset
-    */
-    
 
     // GASEOUS ARGON FILLING
     const G4double ndgar_diam   = p_vessel_diam-2*p_vessel_thickness;
@@ -341,8 +278,8 @@ namespace nexus {
 
     // ACTIVE VOLUME ////////////////////////////////////////////////
 
-    const G4double active_diam   = 5.0 * m; //35.*m; 
-    const G4double active_length = active_diam; //35.*m; //5.0 * m;
+    const G4double active_diam   = 5.0 * m; 
+    const G4double active_length = active_diam; //5.0 * m;
 
     G4Tubs* active_solid_vol =
       new G4Tubs("ACTIVE", 0., active_diam/2., active_length/2., 0., 360.*deg);
@@ -446,12 +383,12 @@ namespace nexus {
       new G4LogicalVolume(pmma_window_solid_vol, pmma_window_mat, "PMMA_WINDOW_LOGIC");
     
     
-    //new G4PVPlacement(nullptr, G4ThreeVector(0., 0., -active_length / 2. - 1. * mm - d_pmma_window / 2),
-    //                  pmma_window_logic_vol, "PMMA_WINDOW", ndgar_logic_vol, 
-    //                  false, 0, true);
-    //new G4PVPlacement(nullptr, G4ThreeVector(0.,0., -active_length / 2. - 1.*mm - d_pmma_window/2 - 10.*cm), 
-    //                  pmma_window_logic_vol, "PMMA_WINDOW", ndgar_logic_vol, 
-    //                  false, 1, true);
+    new G4PVPlacement(nullptr, G4ThreeVector(0., 0., -active_length / 2. - 1. * mm - d_pmma_window / 2),
+                      pmma_window_logic_vol, "PMMA_WINDOW", ndgar_logic_vol, 
+                      false, 0, true);
+    new G4PVPlacement(nullptr, G4ThreeVector(0.,0., -active_length / 2. - 1.*mm - d_pmma_window/2 - 10.*cm), 
+                      pmma_window_logic_vol, "PMMA_WINDOW", ndgar_logic_vol, 
+                      false, 1, true);
     
     
     
@@ -495,19 +432,11 @@ namespace nexus {
       line.erase(0,line.find(delimiter)+delimiter.length());
       s2 = line;
       energyAtVal = (G4double)std::atof(s1.c_str())*nm;
-      //G4cout << "The wavelength is: " << energyAtVal << G4endl;
       effAtVal = (G4double)std::atof(s2.c_str());
       if (effAtVal<0) effAtVal=0;
       energyEff.push_back(h_Planck*c_light /energyAtVal);
       efficiency.push_back(effAtVal / 100.);
-      //std::cout << energyAtVal/nm << " and " << effAtVal/100. << std::endl;
     }
-    std::cout << std::endl << "200 nm are " << h_Planck*c_light/(200.*nm)/eV << " eV" << std::endl;
-    std::cout << std::endl << "500 nm are " << h_Planck*c_light/(500.*nm)/eV << " eV" << std::endl;
-    std::cout << std::endl << "600 nm are " << h_Planck*c_light/(600.*nm)/eV << " eV" << std::endl;
-    std::cout << std::endl << "800 nm are " << h_Planck*c_light/(800.*nm)/eV << " eV" << std::endl;
-    std::cout << std::endl << "650 nm are " << h_Planck*c_light/(650.*nm)/eV << " eV" << std::endl;
-    std::cout              << "10 eV are " << h_Planck*c_light/(10.*eV)/nm << " nm" << std::endl;
     effs.close();
     std::reverse(energyEff.begin(), energyEff.end());
     std::reverse(efficiency.begin(), efficiency.end());
@@ -516,13 +445,10 @@ namespace nexus {
     efficiency.push_back(0.);
     efficiency.push_back(0.);
 
-    //for (int i = 0; i<energyEff.size(); i++) {
-    //  G4cout << "The energy is: " << energyEff[i] << G4endl;
-    //}
+
     photosensor_mpt->AddProperty("REFLECTIVITY", energy, reflectivity, 4);
     photosensor_mpt->AddProperty("EFFICIENCY",   energyEff, efficiency,  energyEff.size());
     photosensor.SetOpticalProperties(photosensor_mpt);
-    //G4cout << "I make it to after property configuration" << G4endl;
     
     
     // Set time binning
@@ -536,7 +462,6 @@ namespace nexus {
     photosensor.SetVisibility(true);
 
     // Construct
-    //G4cout << "I make it to before ps construction" << G4endl;
     photosensor.Construct();
     
     
@@ -577,16 +502,16 @@ namespace nexus {
     //new G4PVPlacement(photosensor_rot, sens_pos, photosensor_logic_vol, photosensor.GetName(), ndgar_logic_vol, false, 0, true);
     
     
-    //for (G4int i = 0; i < N_x - 1; i++) {
-    //    for (G4int j = 0; j < N_y - 1; j++) {
-    //        sens_full_size = std::sqrt(std::pow(std::abs(sens_pos_pv_x[i]), 2) + std::pow(std::abs(sens_pos_pv_y[j]), 2));
-    //        if (sens_full_size < active_diam / 2.) {
-    //            sens_pos = G4ThreeVector(sens_pos_pv_x[i], sens_pos_pv_y[j], -active_length / 2. - 1. * mm -d_pmma_window / 2 - 10. * cm - d_pmma_window / 2 - 1. * mm - sens_size_z / 2. - 1. * cm);
-    //            new G4PVPlacement(photosensor_rot, sens_pos, photosensor_logic_vol, photosensor.GetName(), ndgar_logic_vol, false, sens_id, false);
-    //            ++sens_id;
-    //        }
-    //    }
-    //}
+    for (G4int i = 0; i < N_x - 1; i++) {
+        for (G4int j = 0; j < N_y - 1; j++) {
+            sens_full_size = std::sqrt(std::pow(std::abs(sens_pos_pv_x[i]), 2) + std::pow(std::abs(sens_pos_pv_y[j]), 2));
+            if (sens_full_size < active_diam / 2.) {
+                sens_pos = G4ThreeVector(sens_pos_pv_x[i], sens_pos_pv_y[j], -active_length / 2. - 1. * mm -d_pmma_window / 2 - 10. * cm - d_pmma_window / 2 - 1. * mm - sens_size_z / 2. - 1. * cm);
+                new G4PVPlacement(photosensor_rot, sens_pos, photosensor_logic_vol, photosensor.GetName(), ndgar_logic_vol, false, sens_id, false);
+                ++sens_id;
+            }
+        }
+    }
     
 
     G4double sipmTotSurface = sens_id*sens_size_x*sens_size_y;
@@ -598,141 +523,6 @@ namespace nexus {
     std::cout << "Fill factor of SiPMs on Cathode plane: " << Ffill << std::endl;
     std::cout << std::endl;
 
-    /*
-    const G4int num_photosensors_row = 209;
-    G4int num_photosensor = 0;
-
-
-    for (G4int i=0; i<num_photosensors_row; i++) {
-
-      G4double xpos = -2.5*m + i * 25.*mm;
-
-      for (G4int j=0; j<num_photosensors_row; j++) {
-        
-      G4double ypos = -2.5*m + j * 25.*mm;
-    
-      new G4PVPlacement(photosensor_rot, G4ThreeVector(xpos, ypos, -2.5*m-1.*cm), 
-                        photosensor_logic_vol, "PHOTOSENSOR", ndgar_logic_vol, 
-                        false, num_photosensor, false);
-
-      num_photosensor++;
-      }
-    }
-    */
-
-
-  /*
-    // GAS //////////////////////////////////////////////////////////
-
-    G4Tubs* gas_solid_vol =
-      new G4Tubs("GAS", 0., (active_diam/2. + buffer_size),
-                 (active_length/2. + buffer_size), 0., 360.*deg);
-
-    G4LogicalVolume* gas_logic_vol =
-      new G4LogicalVolume(gas_solid_vol, materials::GAr(10.*bar), "GAS");
-    
-    GeometryBase::SetLogicalVolume(gas_logic_vol);
-
-    // ACTIVE ///////////////////////////////////////////////////////
-
-    G4Tubs* active_solid_vol =
-      new G4Tubs("ACTIVE", 0., active_diam/2., active_length/2., 0, 360.*deg);
-
-    G4LogicalVolume* active_logic_vol =
-      new G4LogicalVolume(active_solid_vol, materials::GAr(10.*bar), "ACTIVE");
-
-    new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), 
-                      active_logic_vol, "ACTIVE", gas_logic_vol, 
-                      false, 0, true);
-
-
-    // ACTIVE ////////////////////////////////////////////////////////
-
-    const G4double active_diam   = chamber_diam;
-    const G4double active_length = chamber_length/2.;
-
-    G4Tubs* active_solid =
-      new G4Tubs("ACTIVE", 0., active_diam/2., active_length/2., 0, twopi);
-
-    G4LogicalVolume* active_logic =
-      new G4LogicalVolume(active_solid, gxe, "ACTIVE");
-
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), active_logic, "ACTIVE",
-		      gas_logic, false, 0, true);
-
-    // Define this volume as an ionization sensitive detector
-    IonizationSD* sensdet = new IonizationSD("/CYLINDRIC_CHAMBER/ACTIVE");
-    active_logic->SetSensitiveDetector(sensdet);
-    G4SDManager::GetSDMpointer()->AddNewDetector(sensdet);
-
-    // Define an electric drift field for this volume
-    UniformElectricDriftField* drift_field = new UniformElectricDriftField();
-    drift_field->SetCathodePosition(-active_length/2.);
-    drift_field->SetAnodePosition(active_length/2.);
-    drift_field->SetDriftVelocity(1.*mm/microsecond);
-    drift_field->SetTransverseDiffusion(1.*mm/sqrt(cm));
-    drift_field->SetLongitudinalDiffusion(.5*mm/sqrt(cm));
-
-    G4Region* drift_region = new G4Region("DRIFT_REGION");
-    drift_region->SetUserInformation(drift_field);
-    drift_region->AddRootLogicalVolume(active_logic);
-
-
-    // EL GAP ////////////////////////////////////////////////////////
-
-    const G4double elgap_diam   = active_diam;
-    const G4double elgap_length = 1. * cm;
-
-    G4Tubs* elgap_solid =
-      new G4Tubs("EL_GAP", 0., elgap_diam/2., elgap_length/2., 0, twopi);
-
-    G4LogicalVolume* elgap_logic =
-      new G4LogicalVolume(elgap_solid, gxe, "EL_GAP");
-
-    G4double pos_z = active_length/2. + elgap_length/2.;
-
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,pos_z), elgap_logic, "EL_GAP",
-		      gas_logic, false, 0, true);
-
-    // Define an EL field for this volume
-    UniformElectricDriftField* el_field = new UniformElectricDriftField();
-    el_field->SetCathodePosition(active_length/2.);
-    el_field->SetAnodePosition(active_length/2. + elgap_length);
-    el_field->SetDriftVelocity(5.*mm/microsecond);
-    el_field->SetTransverseDiffusion(1.*mm/sqrt(cm));
-    el_field->SetLongitudinalDiffusion(.5*mm/sqrt(cm));
-    el_field->SetLightYield(1000./cm);
-
-    G4Region* el_region = new G4Region("EL_REGION");
-    el_region->SetUserInformation(el_field);
-    el_region->AddRootLogicalVolume(elgap_logic);
-
-
-    // PHOTOMULTIPLIER ///////////////////////////////////////////////
-
-    PmtR11410 pmt_geom;
-    pmt_geom.SetSensorDepth(0);
-    pmt_geom.Construct();
-    G4LogicalVolume* pmt_logic = pmt_geom.GetLogicalVolume();
-
-    pos_z = -30. * cm;
-
-    new G4PVPlacement(0, G4ThreeVector(0., 0., pos_z), pmt_logic,
-      "PMT", gas_logic, false, 0, true);
-
-
-    // DICE BOARD ////////////////////////////////////////////////////
-
-    NextNewKDB kdb_geom(5,5);
-    kdb_geom.Construct();
-
-    G4LogicalVolume* kdb_logic = kdb_geom.GetLogicalVolume();
-
-    pos_z = active_length/2. + elgap_length + 5.0*mm;
-
-    new G4PVPlacement(0, G4ThreeVector(0., 0., pos_z), kdb_logic,
-      "KDB", gas_logic, false, 0, true);
-  */
   }
 
 

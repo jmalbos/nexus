@@ -116,7 +116,7 @@ namespace nexus {
 
     //G4double ioni_energy = mpt->GetConstProperty("IONIZATIONENERGY");
     //G4double fano_factor = mpt->GetConstProperty("FANOFACTOR");
-    G4double ioni_energy = 22.4 * eV;
+    G4double ioni_energy = 36.1 * eV; //22.4 * eV;
     G4double fano_factor = .15;
 
     G4double mean = energy_dep / ioni_energy;

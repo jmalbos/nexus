@@ -100,12 +100,11 @@ void GenericPhotosensor::DefineMaterials()
     if (window_rindex_)
       G4Exception("[GenericPhotosensor]", "DefineMaterials()", JustWarning,
                   "Window rindex set, but NOT USED. Using TPB rindex.");
-
     window_optProp->AddProperty("RINDEX",
                                 opticalprops::TPB()->GetProperty("RINDEX"));
     window_mat_->SetMaterialPropertiesTable(window_optProp);
+    
   }
-
   // If the sensor has NOT WLS coating the window must have the rindex
   // set by the user. If it is not set, an exception raises.
   else {
@@ -116,13 +115,13 @@ void GenericPhotosensor::DefineMaterials()
     window_optProp->AddProperty("RINDEX", window_rindex_);
     window_mat_->SetMaterialPropertiesTable(window_optProp);
   }
-
+  
   // Sensitive /////
   sensitive_mat_ = G4NistManager::Instance()->FindOrBuildMaterial("G4_Si");
-
   // WLS coating /////
   wls_mat_ = materials::TPB();
   wls_mat_->SetMaterialPropertiesTable(opticalprops::TPB());
+  
 }
 
 

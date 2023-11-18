@@ -17,6 +17,13 @@
 #include <G4RunManager.hh>
 
 
+G4double SmearTime(G4double time) {
+  const G4double tup = 7.*CLHEP::ns;
+  const G4double tdown = 14.*CLHEP::ns;
+  G4double response = -std::exp(time/tup)+std::exp(time/tdown);
+  return response;
+}
+
 namespace nexus {
 
 
@@ -86,6 +93,7 @@ namespace nexus {
     }
 
     G4double time = step->GetPostStepPoint()->GetGlobalTime();
+
     hit->Fill(time);
 
     return true;

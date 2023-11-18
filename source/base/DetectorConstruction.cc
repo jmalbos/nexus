@@ -15,6 +15,7 @@
 #include <G4LogicalVolume.hh>
 #include <G4VisAttributes.hh>
 #include <G4PVPlacement.hh>
+//#include <G4GDMLParser.hh>
 
 
 using namespace nexus;
@@ -70,6 +71,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   new G4PVPlacement(0, G4ThreeVector(0,0,0),
 		    geometry_logic, geometry_logic->GetName(), world_logic, false, 0);
+
+  //G4GDMLParser parser;
+  //G4String gdmlnames("geom.gdml");
+  //const char* gdmlname = gdmlnames.data();
+  //std::ifstream f(gdmlname);
+  //if (f.good()) { //exists
+  //}
+  //else {
+  //    parser.Write("geom.gdml", world_physi);
+  //}
 
   return world_physi;
 }

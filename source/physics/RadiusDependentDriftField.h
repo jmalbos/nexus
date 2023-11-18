@@ -24,11 +24,11 @@ namespace nexus {
     /// Destructor
     ~RadiusDependentDriftField();
 
-    virtual G4double Drift(G4LorentzVector&);
+    virtual /*G4*/double Drift(G4LorentzVector&);
 
     virtual G4LorentzVector GeneratePointAlongDriftLine(const G4LorentzVector&, const G4LorentzVector&);
 
-    //virtual G4double LightYield() const;
+    //virtual /*G4*/double LightYield() const;
   };
 
 } // end namespace nexus

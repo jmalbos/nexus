@@ -11,6 +11,7 @@
 #include "ArgonGasProperties.h"
 #include "HeliumGasProperties.h"
 
+//#include <G4MaterialTable.hh>
 #include <G4Material.hh>
 #include <G4Element.hh>
 #include <G4NistManager.hh>
@@ -26,6 +27,48 @@ namespace materials {
     return G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
   }
 
+  G4Material* aw5083()
+  {
+    //return G4NistManager::Instance()->FindOrBuildMaterial("G4_Al"); //preliminarily pure Aluminum
+
+    G4String name = "AW5083";
+
+    G4Material* mat = G4Material::GetMaterial(name, false);
+
+    if (mat == 0) {
+
+      mat = new G4Material(name, 2660*kg/m3, 3); //only Al, Mg, Mn assuming no impurities
+
+      G4NistManager* nist = G4NistManager::Instance();
+
+      G4Element* Al = nist->FindOrBuildElement("Al");
+      mat->AddElement(Al, 0.948);
+
+      G4Element* Mn = nist->FindOrBuildElement("Mn");
+      mat->AddElement(Mn, 0.007);
+
+      G4Element* Mg = nist->FindOrBuildElement("Mg");
+      mat->AddElement(Mg, 0.045);
+    }
+
+    return mat;
+  }
+  
+  G4Material* StainlessSteel()
+  {
+    return G4NistManager::Instance()->FindOrBuildMaterial("G4_STAINLESS-STEEL");
+  }
+
+  G4Material* Copper()
+  {
+    return G4NistManager::Instance()->FindOrBuildMaterial("G4_Cu");
+  }
+
+  G4Material* Scintillator()
+  {
+    //return G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYSTYRENE");
+    return G4NistManager::Instance()->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+  }
 
   G4Material* GXe(G4double pressure, G4double temperature)
   {

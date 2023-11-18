@@ -1,8 +1,8 @@
 /nexus/random_seed 123425
 
 /Generator/SingleParticle/particle proton
-/Generator/SingleParticle/min_energy  20. MeV #2GeV is mpv for mu exiting LAr according to cdr pg 102
-/Generator/SingleParticle/max_energy  20. MeV
+/Generator/SingleParticle/min_energy  <energy> #2GeV is mpv for mu exiting LAr according to cdr pg 102
+/Generator/SingleParticle/max_energy  <energy>
 
 #/Generator/SingleParticle/position 0. 0. -1.
 
@@ -20,4 +20,4 @@
 
 /control/execute macros/physics/IonizationElectron.mac
 
-/nexus/persistency/outputFile output/ndgarsimple_hermeticity_ss10mm_proton_20MeV_centre
+/nexus/persistency/outputFile <outdir>/ndgarsimple_hermeticity_ss10mm_proton_<f_id>_centre

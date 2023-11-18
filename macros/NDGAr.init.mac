@@ -1,18 +1,28 @@
 /PhysicsList/RegisterPhysics G4EmStandardPhysics_option4
+/PhysicsList/RegisterPhysics G4EmExtraPhysics
 /PhysicsList/RegisterPhysics G4DecayPhysics
 /PhysicsList/RegisterPhysics G4RadioactiveDecayPhysics
+/PhysicsList/RegisterPhysics G4HadronElasticPhysicsHP
+/PhysicsList/RegisterPhysics G4HadronPhysicsQGSP_BERT_HP
+/PhysicsList/RegisterPhysics G4StoppingPhysics
+/PhysicsList/RegisterPhysics G4IonPhysics
 /PhysicsList/RegisterPhysics G4OpticalPhysics
 /PhysicsList/RegisterPhysics NexusPhysics
 /PhysicsList/RegisterPhysics G4StepLimiterPhysics
+#/PhysicsList/RegisterPhysics QGSP_BERT_HP
+
+/process/optical/scintillation/setFiniteRiseTime true
 
 /nexus/RegisterGeometry NDGAr
 
-/nexus/RegisterGenerator SingleParticleGenerator
+/nexus/RegisterGenerator SingleParticleGenerator #ScintillationGenerator
 
 /nexus/RegisterPersistencyManager PersistencyManager
 
 /nexus/RegisterRunAction DefaultRunAction
 /nexus/RegisterEventAction SaveAllEventAction
-/nexus/RegisterTrackingAction DefaultTrackingAction
+#/nexus/RegisterEventAction DefaultEventAction
+/nexus/RegisterTrackingAction OpticalTrackingAction
+#/nexus/RegisterTrackingAction DefaultTrackingAction
 
 /nexus/RegisterMacro macros/NDGAr.config.mac

@@ -13,6 +13,7 @@
 #include <G4MaterialPropertiesTable.hh>
 
 #include <assert.h>
+#include <stdlib.h> 
 
 using namespace nexus;
 using namespace CLHEP;
@@ -498,23 +499,58 @@ namespace opticalprops {
     const G4int sc_entries = 380;
     std::vector<G4double> sc_energy;
     std::vector<G4double> intensity;
-    for (int i=0; i<sc_entries; i++){
-      sc_energy.push_back(8.240*eV + 0.008*i*eV);
-      intensity.push_back(exp(-pow(Energy_peak/eV-sc_energy[i]/eV,2) /
-                              (2*pow(Energy_sigma/eV, 2)))/(Energy_sigma/eV*sqrt(pi*2.)));
-      //G4cout << "* GAr energy: " << std::setw(6) << sc_energy[i]/eV << " eV  ->  "
-      //       << std::setw(6) << intensity[i] << G4endl;
+    G4double IntegratedIntensity = 6543757645904967.0;
+    
+    // read data from csv file
+    std::ifstream relative_intensities;
+    std::string line;
+    std::string delimiter = ",";
+    std::string s1;
+    std::string s2;
+    G4double energyAtVal;
+    G4double intensAtVal;
+    relative_intensities.open("data/ArCF4_spectrum_1_5barVisOnly.csv");
+    while(getline(relative_intensities,line)) {
+      s1 = line.substr(0,line.find(delimiter));
+      line.erase(0,line.find(delimiter)+delimiter.length());
+      s2 = line;
+      energyAtVal = (G4double)std::atof(s1.c_str())*nm;
+      intensAtVal = (G4double)std::atof(s2.c_str());
+      if (intensAtVal<=0) intensAtVal=0.;
+      //if (energyAtVal<380.*nm) continue; //std::cout << std::endl << energyAtVal << std::endl;
+      sc_energy.push_back(h_Planck*c_light /energyAtVal);
+      intensity.push_back(std::abs(intensAtVal)); // / IntegratedIntensity));
+      //std::cout << sc_energy.back() << " and " << intensity.back() << std::endl;
+      //std::cout << energyAtVal << " and " << intensity.back() << std::endl;
+
     }
+    relative_intensities.close();
+
+    std::reverse(sc_energy.begin(), sc_energy.end());
+    std::reverse(intensity.begin(), intensity.end());
+
+    sc_energy.pop_back();
+    intensity.pop_back();
+
+    for (int i = 0; i<sc_energy.size();i++) {
+      //std::cout << sc_energy[i] << " and " << intensity[i] << std::endl;
+    }
+    
     mpt->AddProperty("SCINTILLATIONCOMPONENT1", sc_energy, intensity);
-    mpt->AddProperty("SCINTILLATIONCOMPONENT2", sc_energy, intensity);
+    //mpt->AddProperty("SCINTILLATIONCOMPONENT2", sc_energy, intensity);
     mpt->AddProperty("ELSPECTRUM"             , sc_energy, intensity, 1);
 
     // CONST PROPERTIES
     mpt->AddConstProperty("SCINTILLATIONYIELD", sc_yield);
-    mpt->AddConstProperty("SCINTILLATIONTIMECONSTANT1",   6.*ns);
-    mpt->AddConstProperty("SCINTILLATIONTIMECONSTANT2",   37.*ns);
+    // numbers correspond to particle types (we can have up to 3 different independent components)
+    
+    mpt->AddConstProperty("SCINTILLATIONRISETIME1",   7.*ns); // is 7ns
+    //mpt->AddConstProperty("SCINTILLATIONRISETIME2",   0.*ns); 
+
+    mpt->AddConstProperty("SCINTILLATIONTIMECONSTANT1",   16.*ns); // is 16ns //original value: 6 ns
+    //mpt->AddConstProperty("SCINTILLATIONTIMECONSTANT2",   37.*ns); //original value: 37 ns
     mpt->AddConstProperty("SCINTILLATIONYIELD1", .342);
-    mpt->AddConstProperty("SCINTILLATIONYIELD2", .658);
+    //mpt->AddConstProperty("SCINTILLATIONYIELD2", .658);
     mpt->AddConstProperty("RESOLUTIONSCALE",    1.0);
     mpt->AddConstProperty("ATTACHMENT",         e_lifetime, 1);
 
@@ -703,8 +739,16 @@ namespace opticalprops {
       6. * eV,       7.2 * eV,  optPhotMaxE_
     };
     std::vector<G4double> REFLECTIVITY = {
-      .98,  .98,  .98,  .98,
-      .72,  .72,  .72
+      //.98,  .98,  .98,  .98,
+      //.72,  .72,  .72
+      //.945, .945, .945, .945, 
+      //.945, .945, .945
+      .95, .95, .95, .95, 
+      .95, .95, .95
+      //1., 1., 1., 1.,
+      //1., 1., 1.
+      //0., 0., 0., 0.,
+      //0., 0., 0.
     };
     mpt->AddProperty("REFLECTIVITY", ENERGIES, REFLECTIVITY);
 
@@ -738,17 +782,19 @@ namespace opticalprops {
   {
     // Data from https://doi.org/10.1140/epjc/s10052-018-5807-z
     G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
-
+    
     // REFRACTIVE INDEX
     std::vector<G4double> rIndex_energies = {optPhotMinE_, optPhotMaxE_};
     std::vector<G4double> TPB_rIndex      = {1.67    , 1.67};
     mpt->AddProperty("RINDEX", rIndex_energies, TPB_rIndex);
+    
 
     // ABSORPTION LENGTH
     // Assuming no absorption except WLS
     std::vector<G4double> abs_energy = {optPhotMinE_, optPhotMaxE_};
     std::vector<G4double> absLength  = {noAbsLength_, noAbsLength_};
     mpt->AddProperty("ABSLENGTH", abs_energy, absLength);
+    
 
     // WLS ABSORPTION LENGTH
     // This is a combination of figure 11 (for wavelength > 270 nm) and
@@ -802,7 +848,7 @@ namespace opticalprops {
       h_Planck * c_light / (250. * nm),  h_Planck * c_light / (230. * nm),
       h_Planck * c_light / (210. * nm),  h_Planck * c_light / (190. * nm),
       h_Planck * c_light / (170. * nm),  h_Planck * c_light / (150. * nm),
-      h_Planck * c_light / (100. * nm),  optPhotMaxE_
+      h_Planck * c_light / (100. * nm),  h_Planck * c_light / (90. * nm) //optPhotMaxE_
     };
 
     std::vector<G4double> WLS_absLength = {
@@ -821,7 +867,9 @@ namespace opticalprops {
     //  G4cout << "* TPB WLS absLength:  " << std::setw(8) << WLS_abs_energy[i] / eV
     //         << " eV  ==  " << std::setw(8) << (h_Planck * c_light / WLS_abs_energy[i]) / nm
     //         << " nm  ->  " << std::setw(6) << WLS_absLength[i] / nm << " nm" << G4endl;
+    //G4cout << "Before mat prop table is set" << G4endl;
     mpt->AddProperty("WLSABSLENGTH", WLS_abs_energy, WLS_absLength);
+    //G4cout << "after mat prop table is set" << G4endl;
 
     // WLS EMISSION SPECTRUM
     // Implemented with formula (7), with parameter values in table (3)
@@ -1384,15 +1432,115 @@ namespace opticalprops {
   /// PMMA == PolyMethylmethacrylate ///
   G4MaterialPropertiesTable* PMMA()
   {
-    // Fiber cladding material.
-    // Properties from geant4/examples/extended/optical/wls
-    G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+      // Fiber cladding material.
+      // Properties from geant4/examples/extended/optical/wls
+      G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
 
-    // REFRACTIVE INDEX
-    std::vector<G4double> rIndex_energies = {optPhotMinE_, optPhotMaxE_};
-    std::vector<G4double> rIndex          = {1.49, 1.49};
-    mpt->AddProperty("RINDEX", rIndex_energies, rIndex);
+      std::vector<G4double> ENERGIES = {
+        optPhotMinE_,  2.8 * eV,  3.5 * eV,  4. * eV,
+        6. * eV,       7.2 * eV,  optPhotMaxE_
+      };
+      std::vector<G4double> REFLECTIVITY = {
+        .98,  .98,  .98,  .98,
+        .72,  .72,  .72
+      };
+      //mpt->AddProperty("REFLECTIVITY", ENERGIES, REFLECTIVITY);
 
+      // REFRACTIVE INDEX
+      const G4int ri_entries = 200;
+
+      const G4double optPhotMinE = h_Planck * c_light / (0.800 * micrometer);
+      const G4double optPhotMaxE = h_Planck * c_light / (0.200 * micrometer);
+
+      G4double eWidth = (optPhotMaxE - optPhotMinE) / ri_entries;
+
+      std::vector<G4double> ri_energy;
+      std::vector<G4double> rIndex;
+      for (int i = 0; i < ri_entries; i++) {
+          G4double wl = h_Planck * c_light / (optPhotMinE + i * eWidth) / micrometer;
+          ri_energy.push_back(optPhotMinE + i * eWidth);
+          rIndex.push_back(sqrt(1 + (1.1819 * pow(wl, 2)) / (pow(wl, 2) - 0.011313)));
+          //std::cout << optPhotMinE + i * eWidth << " and " << sqrt(1+(1.1819*pow(wl,2))/(pow(wl,2)-0.011313)) << std::endl;
+      }
+      mpt->AddProperty("RINDEX", ri_energy, rIndex, ri_entries);
+      
+      /*
+      // REFRACTIVE INDEX
+      std::vector<G4double> rIndex_energies = {optPhotMinE_, optPhotMaxE_};
+      std::vector<G4double> rIndex          = {1.49, 1.49};
+      mpt->AddProperty("RINDEX", rIndex_energies, rIndex);
+      */
+
+      //ABSORPTION LENGTH
+      G4double wl_min = 0.4 * micrometer;
+      G4double wl_max = 0.8 * micrometer;
+      G4double wl_step = 0.01 * micrometer;
+      G4int wl_nsteps = (wl_max - wl_min) / wl_step;
+      std::vector<G4double> abs_energy;
+      for (int i = 0; i <= wl_nsteps; i++) {
+          abs_energy.push_back(h_Planck * c_light / ((wl_max - i * wl_step) /** micrometer*/));
+          //std::cout << "The abslength energy is: " << (wl_max - i * wl_step) << std::endl;
+      }
+      abs_energy.push_back(h_Planck * c_light / (0.285 * micrometer));
+      abs_energy.push_back(h_Planck * c_light / (0.275 * micrometer));
+      abs_energy.push_back(h_Planck * c_light / (0.200 * micrometer)); // account for edge behaviour
+
+      //for (int i = 0; i< abs_energy.size(); i++) {
+      //  G4cout << "The abs energy is: " << abs_energy[i] << G4endl;
+      //}
+
+      std::vector<G4double> abslength = {
+        1. * nanometer, //corresponds to 200 nm
+        1. * nanometer, //corresponds to 275 nm
+          4 * pi * 3.82e-7 / (0.285  * micrometer) , // corresponds to 285 nm, up to here manually added elements to account for edge behaviour
+          4 * pi * 3.82e-7 / (0.4  * micrometer) ,
+          4 * pi * 2.39e-7 / (0.41 * micrometer) ,
+          4 * pi * 2.24e-7 / (0.42 * micrometer) ,
+          4 * pi * 2.18e-7 / (0.43 * micrometer) ,
+          4 * pi * 2.05e-7 / (0.44 * micrometer) ,
+          4 * pi * 2.24e-7 / (0.45 * micrometer) ,
+          4 * pi * 2.13e-7 / (0.46 * micrometer) ,
+          4 * pi * 1.97e-7 / (0.47 * micrometer) ,
+          4 * pi * 2.23e-7 / (0.48 * micrometer) ,
+          4 * pi * 2.14e-7 / (0.49 * micrometer) ,
+          4 * pi * 2.24e-7 / (0.5  * micrometer) ,
+          4 * pi * 2.16e-7 / (0.51 * micrometer) ,
+          4 * pi * 2.17e-7 / (0.52 * micrometer) ,
+          4 * pi * 2.18e-7 / (0.53 * micrometer) ,
+          4 * pi * 2.21e-7 / (0.54 * micrometer) ,
+          4 * pi * 2.28e-7 / (0.55 * micrometer) ,
+          4 * pi * 2.25e-7 / (0.56 * micrometer) ,
+          4 * pi * 2.33e-7 / (0.57 * micrometer) ,
+          4 * pi * 2.37e-7 / (0.58 * micrometer) ,
+          4 * pi * 2.29e-7 / (0.59 * micrometer) ,
+          4 * pi * 2.76e-7 / (0.6  * micrometer) ,
+          4 * pi * 2.65e-7 / (0.61 * micrometer) ,
+          4 * pi * 2.56e-7 / (0.62 * micrometer) ,
+          4 * pi * 2.6e-7  / (0.63 * micrometer) ,
+          4 * pi * 2.67e-7 / (0.64 * micrometer) ,
+          4 * pi * 2.56e-7 / (0.65 * micrometer) ,
+          4 * pi * 2.48e-7 / (0.66 * micrometer) ,
+          4 * pi * 2.32e-7 / (0.67 * micrometer) ,
+          4 * pi * 2.3e-7  / (0.68 * micrometer) ,
+          4 * pi * 2.44e-7 / (0.69 * micrometer) ,
+          4 * pi * 2.63e-7 / (0.7  * micrometer) ,
+          4 * pi * 2.57e-7 / (0.71 * micrometer) ,
+          4 * pi * 2.95e-7 / (0.72 * micrometer) ,
+          4 * pi * 2.91e-7 / (0.73 * micrometer) ,
+          4 * pi * 2.78e-7 / (0.74 * micrometer) ,
+          4 * pi * 2.67e-7 / (0.75 * micrometer) ,
+          4 * pi * 2.54e-7 / (0.76 * micrometer) ,
+          4 * pi * 2.13e-7 / (0.77 * micrometer) ,
+          4 * pi * 2.83e-7 / (0.78 * micrometer) ,
+          4 * pi * 2.76e-7 / (0.79 * micrometer) ,
+          4 * pi * 2.68e-7 / (0.8  * micrometer) };
+      std::reverse(abslength.begin(), abslength.end());
+      for (int i = 0; i < abslength.size(); i++) {
+          abslength[i] = 1 / abslength[i];
+      }
+
+
+    /*
     // ABSORPTION LENGTH
     std::vector<G4double> abs_energy = {
       optPhotMinE_,
@@ -1405,7 +1553,19 @@ namespace opticalprops {
       noAbsLength_,  4537. * mm,  329.7 * mm,  98.60 * mm,  36.94 * mm,  10.36 * mm,  4.356 * mm,
       2.563 * mm,    1.765 * mm,  1.474 * mm,  1.153 * mm,  0.922 * mm,  0.765 * mm,  0.671 * mm,
       0.671 * mm
-    };
+    };*/
+
+
+      std::vector<G4double> abs_energy_test = {
+        optPhotMinE_,                      h_Planck * c_light / (750. * nm),
+        h_Planck * c_light / (740. * nm),  h_Planck * c_light / (380. * nm),
+        h_Planck * c_light / (370. * nm),  optPhotMaxE_
+      };
+      std::vector<G4double> abslength_test = {
+        noAbsLength_,  noAbsLength_,
+        3.5 * m,       3.5 * m,
+        noAbsLength_,  noAbsLength_
+      };
     mpt->AddProperty("ABSLENGTH", abs_energy, abslength);
 
     return mpt;

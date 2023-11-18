@@ -22,6 +22,14 @@ namespace materials {
 
   G4Material* Air();
 
+  // vessel material: aluminium 5083
+  G4Material* aw5083();
+  G4Material* StainlessSteel();
+
+  // ECAL materials
+  G4Material* Copper();
+  G4Material* Scintillator();
+
   // Gaseous xenon
   G4Material* GXe(G4double pressure=STP_Pressure,
 			            G4double temperature=STP_Temperature);
