@@ -436,6 +436,7 @@ namespace nexus {
       if (effAtVal<0) effAtVal=0;
       energyEff.push_back(h_Planck*c_light /energyAtVal);
       efficiency.push_back(effAtVal / 100.);
+      //G4cout << "wl: " << energyAtVal/nm << " nm, eff: " << efficiency.back() << G4endl;
     }
     effs.close();
     std::reverse(energyEff.begin(), energyEff.end());
