@@ -1,0 +1,25 @@
+/nexus/random_seed 123425
+
+#/Generator/SingleParticle/particle lambda
+#/Generator/SingleParticle/min_energy  1.798283717353855 MeV
+#/Generator/SingleParticle/max_energy  1.798283717353855 MeV
+#/Generator/SingleParticle/position 0. 0. -1.
+#/Generator/SingleParticle/position 0. 0. 1. #-6000 #-4850.
+#/Generator/SingleParticle/momentum -0.8310702  -0.18779017  0.52350471
+#/Generator/SingleParticle/min_costheta 
+#/Generator/SingleParticle/max_costheta 
+#/Generator/SingleParticle/min_phi 
+#/Generator/SingleParticle/max_phi 
+#/Generator/SingleParticle/region CENTER
+
+#/Generator/ScintGenerator/region CENTRAL_AXIS
+#/Generator/ScintGenerator/nphotons 1
+
+
+/Generator/HyperonGenerator/inputFile ../../../4_Simulations/HyperonsArgon/QE/FSIHyp_muon_events.dat
+/Generator/HyperonGenerator/position 0. 0. 1. #-6000 #-4850.
+
+
+/control/execute macros/physics/IonizationElectron.mac
+
+/nexus/persistency/outputFile output/hyperar_FSI_V1
