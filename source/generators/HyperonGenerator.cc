@@ -125,9 +125,9 @@ void HyperonGenerator::GeneratePrimaryVertex(G4Event* event)
   // create a primary particle
 
   G4PrimaryParticle* p0_mu =
-    new G4PrimaryParticle(mu, kpx*GeV, kpy*GeV, kpz*GeV);
+    new G4PrimaryParticle(mu, kpx*MeV, kpy*MeV, kpz*MeV);
   G4PrimaryParticle* p0_hyp =
-    new G4PrimaryParticle(hyp, phx*GeV, phy*GeV, phz*GeV);
+    new G4PrimaryParticle(hyp, phx*MeV, phy*MeV, phz*MeV);
 
   p0_mu ->SetMass  (mu ->GetPDGMass());
   p0_mu ->SetCharge(mu ->GetPDGCharge());
@@ -143,6 +143,9 @@ void HyperonGenerator::GeneratePrimaryVertex(G4Event* event)
 
   // add vertex to the event
   event->AddPrimaryVertex(vertex);
+  PrimaryVertexUserInfo* partInfo = new PrimaryVertexUserInfo(weight);
+  event->GetPrimaryVertex()->SetUserInformation(partInfo);
+
 }
 
 void HyperonGenerator::ProcessHeader()

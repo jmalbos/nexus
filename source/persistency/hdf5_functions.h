@@ -65,6 +65,7 @@
 	float length;
         char creator_proc[STRLEN];
 	char final_proc[STRLEN];
+  double event_weight;
   } particle_info_t;
 
   typedef struct{

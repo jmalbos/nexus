@@ -88,6 +88,7 @@ hsize_t createParticleInfoType()
   H5Tinsert (memtype, "length", HOFFSET (particle_info_t, length), H5T_NATIVE_FLOAT);
   H5Tinsert (memtype, "creator_proc", HOFFSET (particle_info_t, creator_proc), proc_strtype);
   H5Tinsert (memtype, "final_proc", HOFFSET (particle_info_t, final_proc), proc_strtype);
+  H5Tinsert (memtype, "event_weight", HOFFSET (particle_info_t, event_weight), H5T_NATIVE_DOUBLE);
   return memtype;
 }
 

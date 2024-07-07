@@ -25,6 +25,7 @@ class G4VHitsCollection;
 namespace nexus {
   class HDF5Writer;
   class IonizationHit;
+  //class PrimaryVertexUserInfo;
 }
 
 namespace nexus {

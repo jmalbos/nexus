@@ -14,6 +14,7 @@
 #define HYPERON_GENERATOR_H
 
 #include <G4VPrimaryGenerator.hh>
+#include <G4VUserPrimaryVertexInformation.hh>
 #include <fstream>
 
 class G4GenericMessenger;
@@ -24,6 +25,34 @@ class decay0;
 namespace nexus {
 
   class GeometryBase;
+
+  class basePrimaryVertexUserInfo : public G4VUserPrimaryVertexInformation
+  {
+    public:
+      basePrimaryVertexUserInfo();
+      virtual ~basePrimaryVertexUserInfo();
+    
+    private:
+      void Print() const;
+  };
+
+  inline basePrimaryVertexUserInfo::basePrimaryVertexUserInfo() {}
+  inline basePrimaryVertexUserInfo::~basePrimaryVertexUserInfo() {}
+  inline void basePrimaryVertexUserInfo::Print() const {}
+
+  class PrimaryVertexUserInfo : public basePrimaryVertexUserInfo
+  {
+    public:
+      PrimaryVertexUserInfo() {}
+      PrimaryVertexUserInfo(G4double weight) {fWeight = weight;}
+      ~PrimaryVertexUserInfo() {}
+
+      void SetWeight(G4double weight) {fWeight = weight;}
+      G4double GetWeight() const {return fWeight;}
+    
+    private:
+      G4double fWeight;
+  };
 
 
   /// This primary generator sets the G4Event objects according to the

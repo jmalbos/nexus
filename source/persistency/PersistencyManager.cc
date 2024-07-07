@@ -9,6 +9,7 @@
 
 #include "PersistencyManager.h"
 
+#include "HyperonGenerator.h"
 #include "Trajectory.h"
 #include "TrajectoryMap.h"
 #include "IonizationSD.h"
@@ -192,6 +193,12 @@ void PersistencyManager::StoreTrajectories(G4TrajectoryContainer* tc)
     } else {
       mother_id = trj->GetParentID();
     }
+
+    const G4Event* anEvent = G4RunManager::GetRunManager()->GetCurrentEvent();
+    G4PrimaryVertex *primaryVertex = anEvent->GetPrimaryVertex();
+    PrimaryVertexUserInfo* primaryVertexInfo = (PrimaryVertexUserInfo*)(primaryVertex->GetUserInformation());
+    double event_weight = primaryVertexInfo==0 ? 1 : primaryVertexInfo->GetWeight();
+    
     h5writer_->WriteParticleInfo(nevt_, trackid, trj->GetParticleName().c_str(),
 				 primary, mother_id,
 				 (float)ini_xyz.x(), (float)ini_xyz.y(),
@@ -204,7 +211,8 @@ void PersistencyManager::StoreTrajectories(G4TrajectoryContainer* tc)
                                  (float)final_mom.y(), (float)final_mom.z(),
 				 kin_energy, length,
                                  trj->GetCreatorProcess().c_str(),
-				 trj->GetFinalProcess().c_str());
+				 trj->GetFinalProcess().c_str(),
+         event_weight);
 
   }
 }
