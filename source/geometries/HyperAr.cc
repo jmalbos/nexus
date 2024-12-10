@@ -62,6 +62,9 @@ namespace nexus {
     G4Box* testbox_solid = new G4Box("TESTBOX", 50.*m,50.*m,50.*m);
     G4LogicalVolume* testbox_lv = new G4LogicalVolume(testbox_solid, lar, "TESTBOX_LV");
     
+    //G4UserLimits* fStepLimit = new G4UserLimits(1.0*m);
+    //fStepLimit->SetUserMinRange(1.0 * m);
+    //testbox_lv->SetUserLimits(fStepLimit);
     new G4PVPlacement (nullptr, G4ThreeVector(0., 0., 0.), testbox_lv, "TESTBOX", hall_logic_vol, false, 0, true);
 
     // Define this volume as an ionization sensitive detector

@@ -26,6 +26,7 @@
 #include <G4UserTrackingAction.hh>
 #include <G4UserSteppingAction.hh>
 #include <G4UserStackingAction.hh>
+#include <G4StepLimiterPhysics.hh>
 
 using namespace nexus;
 using std::make_unique;
@@ -83,6 +84,7 @@ NexusApp::NexusApp(G4String init_macro): G4RunManager(), gen_name_(""),
   // The generic physics list must be initialized before
   // processing the init macro, where the physics lists are registered
   auto pl = make_unique<G4GenericPhysicsList>();
+  pl->RegisterPhysics(new G4StepLimiterPhysics());
 
   BatchSession(init_macro.c_str()).SessionStart();
 

@@ -90,6 +90,7 @@ namespace nexus {
 
     G4ThreeVector position_;
 
+    G4int eventStart_;
     int myEventCounter_;
     G4int nevents_;
 

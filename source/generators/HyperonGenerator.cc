@@ -34,6 +34,7 @@ HyperonGenerator::HyperonGenerator():
     "Control commands of the anti-nu-mu-hyperon vertex generator interface.");
 
   msg_->DeclareMethod("inputFile", &HyperonGenerator::OpenInputFile, "");
+  msg_->DeclareProperty("eventStart", eventStart_, "Set line number from where to start recording events.");
   msg_->DeclarePropertyWithUnit("position", "mm",  position_, "Set particle vertex.");
 
   DetectorConstruction* detConst = (DetectorConstruction*)
@@ -125,9 +126,9 @@ void HyperonGenerator::GeneratePrimaryVertex(G4Event* event)
   // create a primary particle
 
   G4PrimaryParticle* p0_mu =
-    new G4PrimaryParticle(mu, kpx*MeV, kpy*MeV, kpz*MeV);
+    new G4PrimaryParticle(mu, kpx*GeV, kpy*GeV, kpz*GeV);
   G4PrimaryParticle* p0_hyp =
-    new G4PrimaryParticle(hyp, phx*MeV, phy*MeV, phz*MeV);
+    new G4PrimaryParticle(hyp, phx*GeV, phy*GeV, phz*GeV);
 
   p0_mu ->SetMass  (mu ->GetPDGMass());
   p0_mu ->SetCharge(mu ->GetPDGCharge());
