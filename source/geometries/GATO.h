@@ -1,5 +1,5 @@
-#ifndef HYPER_AR_H
-#define HYPER_AR_H
+#ifndef GATO_H
+#define GATO_H
 
 #include "GeometryBase.h"
 #include <G4UniformMagField.hh>
@@ -10,13 +10,13 @@ class G4GenericMessenger;
 
 namespace nexus {
 
-  class HyperAr: public GeometryBase
+  class GATO: public GeometryBase
   {
   public:
     /// Constructor
-    HyperAr();
+    GATO();
     /// Destructor
-    ~HyperAr() = default;
+    ~GATO() = default;
 
     /// Return vertex within region <region> of the chamber
     virtual G4ThreeVector GenerateVertex(const G4String& region) const;

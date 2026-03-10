@@ -14,7 +14,7 @@
 #include "PersistencyManagerBase.h"
 
 #include <G4RunManager.hh>
-
+#include <memory>
 class G4GenericMessenger;
 
 

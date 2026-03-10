@@ -13,6 +13,7 @@
 #include <G4VUserPrimaryGeneratorAction.hh>
 #include <globals.hh>
 
+#include <memory>
 class G4VPrimaryGenerator;
 
 namespace nexus {

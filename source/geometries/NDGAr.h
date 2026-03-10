@@ -4,7 +4,7 @@
 #include "GeometryBase.h"
 #include <G4UniformMagField.hh>
 #include <G4FieldManager.hh>
-
+#include <memory>
 class G4GenericMessenger;
 
 
