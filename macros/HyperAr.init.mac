@@ -19,10 +19,14 @@
 
 /nexus/RegisterPersistencyManager PersistencyManager
 
-/nexus/RegisterRunAction DefaultRunAction
-/nexus/RegisterEventAction SaveAllEventAction
-#/nexus/RegisterEventAction DefaultEventAction
+# full optical build
+#/nexus/RegisterRunAction      DefaultRunAction
+#/nexus/RegisterEventAction    SaveAllEventAction
 #/nexus/RegisterTrackingAction OpticalTrackingAction
+
+# default build
+/nexus/RegisterRunAction      DefaultRunAction
+/nexus/RegisterEventAction    DefaultEventAction
 /nexus/RegisterTrackingAction DefaultTrackingAction
 
 /nexus/RegisterMacro macros/HyperAr.config.mac
